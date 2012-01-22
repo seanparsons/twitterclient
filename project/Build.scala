@@ -31,6 +31,8 @@ object TwitterClientBuild extends Build {
         """,
       scalacOptions ++= Seq("-deprecation"),
       fork in run := true,
+      outputStrategy := Some(StdoutOutput),
+      connectInput in run := true,
       publishTo := Some(Resolver.file("file",  new File(System.getProperty("maven.repo", "./target/maven-repo"))))
     )
   )

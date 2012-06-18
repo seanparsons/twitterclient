@@ -1,10 +1,11 @@
 package com.github.seanparsons.twitterclient
 
 import javax.swing.UIManager
-import com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel
+import javax.swing.plaf.nimbus.NimbusLookAndFeel
 import java.io.File
+import Prompts._
 
-object TwitterClientApp {
+object TwitterClientApp extends App {
   // Set the L&F.
   UIManager.setLookAndFeel(new NimbusLookAndFeel())
   // Authorize loop.
@@ -12,7 +13,8 @@ object TwitterClientApp {
   val twitterClient = twitterClientAuthorizer.getTwitterClient()
   // Load UI.
   twitterClient
-    .map(clientOption => clientOption.map(client => new MainWindow(client)))
+    .flatMap{clientOption =>
+      clientOption.map(MainWindow.create).getOrElse(displayMessage("Issue with OAuth."))
+    }
     .unsafePerformIO
-    .foreach(_.visible = true)
 }

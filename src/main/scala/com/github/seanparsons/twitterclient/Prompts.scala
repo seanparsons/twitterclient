@@ -1,7 +1,7 @@
 package com.github.seanparsons.twitterclient
 
 import scalaz._
-import effects._
+import effect._
 import Scalaz._
 import concurrent._
 import swing.Dialog
@@ -19,7 +19,7 @@ object Prompts {
     }
   }
 
-  def displayMessage(message: String, title: String, messageType: Message.Value = Message.Info): IO[Unit] = {
+  def displayMessage(message: String, title: String = "Twitron", messageType: Message.Value = Message.Info): IO[Unit] = {
     swingRun{
       Dialog.showMessage(
         message = message,

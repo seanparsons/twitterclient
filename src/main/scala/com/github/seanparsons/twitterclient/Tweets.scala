@@ -9,19 +9,19 @@ import java.awt.Dimension
 case class Tweet(message: String)
 
 object Tweets {
-  def parseTimeline(jsonValue: JSONValue): ValidationNEL[String, Seq[Tweet]] = {
+  def parseTimeline(jsonValue: JSONValue): PossibleJSONError[Seq[Tweet]] = {
     for {
-      tweetsAsJSON <- jsonValue.asJSONArray
-      tweets: Seq[Tweet] <- tweetsAsJSON.elements.map(parseTweet).sequence[({type l[a]=ValidationNEL[String, a]})#l, Tweet]
+      tweetsAsJSON <- jsonValue.as[JSONArray]
+      tweets: Seq[Tweet] <- tweetsAsJSON.elements.map(parseTweet).toList.sequence[({type l[a]=ValidationNEL[JSONError, a]})#l, Tweet]
     } yield tweets
   }
 
-  def parseTweet(jsonValue: JSONValue): ValidationNEL[String, Tweet] = {
+  def parseTweet(jsonValue: JSONValue): PossibleJSONError[Tweet] = {
     for {
-      tweetJSONObject <- jsonValue.asJSONObject
-      textJSONValue <- (tweetJSONObject \ "text")
-      text <- textJSONValue.asJSONString
-    } yield new Tweet(text.value)
+      tweetJSONObject <- jsonValue.as[JSONObject]
+      textJSONValue <- tweetJSONObject / "text"
+      text <- textJSONValue.as[String]
+    } yield new Tweet(text)
   }
 }
 
